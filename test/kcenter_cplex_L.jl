@@ -18,25 +18,25 @@ using Ipopt, CPLEX#, SCIP
 
 # load functions for branch&bound and data preprocess from self-created module
 
-if !("scr/" in LOAD_PATH)
-    push!(LOAD_PATH, "scr/")
+if !("src/" in LOAD_PATH)
+    push!(LOAD_PATH, "src/")
 end
 using kcenter_opt, data_process
 
 dataname = ARGS[2]
 if dataname == "iris"
-    data, label = data_preprocess("iris")
+    data = data_preprocess("iris") # read iris data from datasets package
 else
     if Sys.iswindows()
-        data, label = data_preprocess(dataname, nothing, joinpath(@__DIR__, "..\\data\\"), "NA") # read data in Windows
+        data = data_preprocess(dataname, nothing, joinpath(@__DIR__, "..\\data\\"), "NA") # read data in Windows
     else
-        data, label = data_preprocess(dataname, nothing, joinpath(@__DIR__, "../data/"), "NA") # read data in Mac
+        data = data_preprocess(dataname, nothing, joinpath(@__DIR__, "../data/"), "NA") # read data in Mac
     end
 end
 println("data size: ", size(data))
 println("data type: ", typeof(data))
 
-k = parse(Int, ARGS[1]) #length(unique(label))
+k = parse(Int, ARGS[1]) 
 Random.seed!(123)
 
 nlines = parse(Int, ARGS[3])

@@ -6,8 +6,8 @@ using JLD
 using TimerOutputs: @timeit, get_timer
 
 # load functions for branch&bound and data preprocess from self-created module
-if !("scr/" in LOAD_PATH)
-    push!(LOAD_PATH, "scr/")
+if !("src/" in LOAD_PATH)
+    push!(LOAD_PATH, "src/")
 end
 using kcenter_opt, data_process, kcenter_bb
 
@@ -23,20 +23,37 @@ using kcenter_opt, data_process, kcenter_bb
 const to = get_timer("Shared")
 
 # real world dataset testing
+# @timeit to "load data" begin
+#     dataname = ARGS[2]
+#     if dataname == "iris"
+#         data, label = data_preprocess("iris") # read iris data from datasets package
+#     else
+#         if Sys.iswindows()
+#             data, label = data_preprocess(dataname, nothing, joinpath(@__DIR__, "..\\data\\"), "NA") # read data in Windows
+#         else
+#             data, label = data_preprocess(dataname, nothing, joinpath(@__DIR__, "../data/"), "NA") # read data in Mac
+#         end
+#     end
+#     label = vec(label)
+#     k = parse(Int, ARGS[1])
+#     Random.seed!(123)
+#     println("data size: ", size(data))
+#     println("data type: ", typeof(data))
+# end # end of @timeit to "load data"
+
 @timeit to "load data" begin
     dataname = ARGS[2]
-    if dataname == "iris"
-        data, label = data_preprocess("iris") # read iris data from datasets package
-    else
-        if Sys.iswindows()
-            data, label = data_preprocess(dataname, nothing, joinpath(@__DIR__, "..\\data\\"), "NA") # read data in Windows
-        else
-            data, label = data_preprocess(dataname, nothing, joinpath(@__DIR__, "../data/"), "NA") # read data in Mac
-        end
-    end
-    label = vec(label)
     k = parse(Int, ARGS[1])
     Random.seed!(123)
+    if dataname == "iris"
+        data = data_preprocess("iris") # read iris data from datasets package
+    else
+        if Sys.iswindows()
+            data = data_preprocess(dataname, nothing, joinpath(@__DIR__, "..\\data\\"), "NA") # read data in Windows
+        else
+            data = data_preprocess(dataname, nothing, joinpath(@__DIR__, "../data/"), "NA") # read data in Mac
+        end
+    end
     println("data size: ", size(data))
     println("data type: ", typeof(data))
 end # end of @timeit to "load data"
@@ -62,7 +79,7 @@ end # end of @timeit to "load data"
     end
 end # end of @timeit to "Total BB"
 
-# show(to)
-# print("\n")
+show(to)
+print("\n")
 
 

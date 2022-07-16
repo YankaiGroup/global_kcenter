@@ -21,22 +21,12 @@ function data_preprocess(dataname, datapackage = "datasets", path=nothing, missi
         data = CSV.read(joinpath(path, dataname), DataFrame, header = header, types= types, missingstring = missingchar)
         data = dropmissing(data)
     end
-    # process to separate features and label
-    v = data[:,ncol(data)]
-    if v isa CategoricalArray{String,1,UInt8}
-        v =  (1:length(levels(v.pool)))[v.refs]
-    else # change arbitary numerical labels to label from 1
-        lbl = zeros(size(data)[1],1)
-        for (idx,val) in enumerate(unique(v))
-            lbl[findall(v -> v == val, v)] .= idx
-        end
-        v = Int.(lbl) 
+
+    if dataname == "iris"
+        return Array(Matrix(data[:, 1:(ncol(data)-1)])') # delete the label column in iris
+    else
+        return Array(Matrix(data[:, 1:(ncol(data))])')
     end
-    # println(unique(v))
-    # println(length(unique(v)))
-    # return data(deleting the first index column) in transpose for optimization process (only for some dataset)
-    # return convert(Matrix, data[:,2:(ncol(data)-1)])', v # seeds
-    return Matrix(data[:,1:(ncol(data)-1)])', v  # iris convert(Matrix, iris) will have error in niagara
 end 
 
 function sig_gen(eigvals)
